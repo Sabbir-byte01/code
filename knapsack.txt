@@ -1,0 +1,73 @@
+#include <stdio.h>
+
+// Structure for item
+struct Item {
+    int weight;
+    int value;
+    float ratio;
+};
+
+// Function to sort items by ratio (descending)
+void sortByRatio(struct Item items[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (items[j].ratio < items[j + 1].ratio) {
+                // swap
+                struct Item temp = items[j];
+                items[j] = items[j + 1];
+                items[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Fractional Knapsack function
+float fractionalKnapsack(struct Item items[], int n, int capacity) {
+    float totalValue = 0.0;
+
+    for (int i = 0; i < n; i++) {
+        if (items[i].weight <= capacity) {
+            capacity -= items[i].weight;
+            totalValue += items[i].value;
+        } else {
+            float fraction = (float)capacity / items[i].weight;
+            totalValue += items[i].value * fraction;
+            capacity = 0;
+            break;
+        }
+    }
+
+    return totalValue;
+}
+
+int main() {
+    int n, capacity;
+
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+
+    struct Item items[n];   // Variable Length Array (C99)
+
+    for (int i = 0; i < n; i++) {
+        printf("\nEnter weight of item %d: ", i + 1);
+        scanf("%d", &items[i].weight);
+
+        printf("Enter value of item %d: ", i + 1);
+        scanf("%d", &items[i].value);
+
+        // Calculate ratio
+        items[i].ratio = (float)items[i].value / items[i].weight;
+    }
+
+    printf("\nEnter Knapsack capacity: ");
+    scanf("%d", &capacity);
+
+    // Sort items by ratio
+    sortByRatio(items, n);
+
+    float maxValue = fractionalKnapsack(items, n, capacity);
+
+    printf("\nMaximum value in Knapsack = %.2f\n", maxValue);
+
+    return 0;
+}
